@@ -3,7 +3,7 @@ import streamlit as st
 from openai import OpenAI
 
 client = OpenAI(
-    api_key=""
+    api_key=st.secrets.get("OPENAI_API_KEY")
 )
 
 st.set_page_config(page_title="Prosty Chat z AI", page_icon="🤖")
