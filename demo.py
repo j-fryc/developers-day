@@ -2,7 +2,9 @@ import httpx
 import streamlit as st
 from openai import OpenAI
 
-client = OpenAI()
+client = OpenAI(
+    api_key=""
+)
 
 st.set_page_config(page_title="Prosty Chat z AI", page_icon="🤖")
 
