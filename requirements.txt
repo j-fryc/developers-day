@@ -5,3 +5,4 @@ langchain
 PyPDF2
 sqlalchemy
 psycopg2-binary
+langchain-community
