@@ -9,7 +9,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import OpenAI as ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
-from langchain.schema.runnable import RunnablePassthrough
+from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.pgvector import PGVector
 from streamlit.runtime.uploaded_file_manager import UploadedFile
@@ -70,13 +70,14 @@ class LLMChain:
             Kontekst:
             Pytanie: {question}""")
 
+        retriever = RunnableLambda(
+            lambda x: {"context": "\n\n".join(
+                doc.page_content for doc in self.knowledge_base.search(x["question"], k=3)
+            ), "question": x["question"]}
+        )
+
         self.chain = (
-                {"context":
-                     lambda x: "\n\n".join(
-                         [doc.page_content for doc in self.knowledge_base.search(x["question"], k=3)]),
-                 "question":
-                     RunnablePassthrough(),
-                 }
+                retriever
                 | self.prompt_template
                 | self.llm
                 | StrOutputParser()
