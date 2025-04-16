@@ -72,7 +72,7 @@ class LLMChain:
         self.knowledge_base = knowledge_base
 
         self.prompt_template = PromptTemplate.from_template("""Udziel odpowiedzi na pytanie na podstawie kontekstu.
-            Kontekst:
+            Kontekst: {context}
             Pytanie: {question}""")
 
         self.chain = (
