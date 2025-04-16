@@ -6,6 +6,7 @@ import PyPDF2
 import streamlit as st
 from langchain.docstore.document import Document
 from langchain.embeddings import OpenAIEmbeddings
+from langchain_core.runnables import RunnableLambda
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
@@ -52,12 +53,7 @@ class KnowledgeBase:
                 os.remove(tmp_path)
 
     def search(self, query: str, k: int = 3) -> List[Document]:
-
-        test = self.vectorstore.similarity_search(query, k=k)
-        print("@@@@@@@@@@@@@@@", flush=True)
-        print(test, flush=True)
-        print("@@@@@@@@@@@@@@@", flush=True)
-        return test
+        return self.vectorstore.similarity_search(query, k=k)
 
 
 class LLMChain:
@@ -75,13 +71,15 @@ class LLMChain:
             Kontekst: {context}
             Pytanie: {question}""")
 
+        retriever = RunnableLambda(
+            lambda x: {"context": "\n\n".join(
+                doc.page_content for doc in self.knowledge_base.search(x["question"], k=3)
+            ), "question": x["question"]}
+        )
+
+
         self.chain = (
-                {"context":
-                     lambda x: "\n\n".join(
-                         [doc.page_content for doc in self.knowledge_base.search(x["question"], k=3)]),
-                 "question":
-                     RunnablePassthrough(),
-                 }
+                retriever
                 | self.prompt_template
                 | self.llm
                 | StrOutputParser()
