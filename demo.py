@@ -52,7 +52,12 @@ class KnowledgeBase:
                 os.remove(tmp_path)
 
     def search(self, query: str, k: int = 3) -> List[Document]:
-        return self.vectorstore.similarity_search(query, k=k)
+
+        test = self.vectorstore.similarity_search(query, k=k)
+        print("@@@@@@@@@@@@@@@", flush=True)
+        print(test, flush=True)
+        print("@@@@@@@@@@@@@@@", flush=True)
+        return test
 
 
 class LLMChain:
