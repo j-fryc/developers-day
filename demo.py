@@ -64,19 +64,18 @@ class LLMChain:
             model_name: str = "gpt-3.5-turbo",
             temperature: float = 0.7,
     ):
-        self.llm = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name, temperature=temperature)
         self.knowledge_base = knowledge_base
-
-        self.prompt_template = PromptTemplate.from_template("""Udziel odpowiedzi na pytanie na podstawie kontekstu.
-            Kontekst: {context}
-            Pytanie: {question}""")
-
         retriever = RunnableLambda(
             lambda x: {"context": "\n\n".join(
                 doc.page_content for doc in self.knowledge_base.search(x["question"], k=3)
             ), "question": x["question"]}
         )
 
+        self.prompt_template = PromptTemplate.from_template("""Udziel odpowiedzi na pytanie na podstawie kontekstu.
+            Kontekst: {context}
+            Pytanie: {question}""")
+
+        self.llm = ChatOpenAI(openai_api_key=openai_api_key, model_name=model_name, temperature=temperature)
 
         self.chain = (
                 retriever
