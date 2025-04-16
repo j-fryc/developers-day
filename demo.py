@@ -12,7 +12,7 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.pgvector import PGVector
-from streamlit.uploaded_file_manager import UploadedFile
+from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 
 class KnowledgeBase:
