@@ -6,7 +6,7 @@ import PyPDF2
 import streamlit as st
 from langchain.docstore.document import Document
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.llms import OpenAI as ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
