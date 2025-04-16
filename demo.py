@@ -1,17 +1,19 @@
-import streamlit as st
-from openai import OpenAI
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores.pgvector import PGVector
-import tempfile
 import os
+import tempfile
+
 import PyPDF2
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
+import streamlit as st
 from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
+from langchain.docstore.document import Document
+from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import OpenAI as LangchainOpenAI
+from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.vectorstores.pgvector import PGVector
+from openai import OpenAI
+
 
 class KnowledgeBase:
     def __init__(self, pg_conn_string, collection_name, openai_api_key):
@@ -39,43 +41,43 @@ class KnowledgeBase:
         documents = [Document(page_content=chunk) for chunk in chunks]
 
         self.vectorstore.add_documents(documents)
-        return True  # Indicate successful processing
-
+        return True
 
     def search(self, query, k=3):
         return self.vectorstore.similarity_search(query, k=k)
 
-class LLMChainWrapper:  # Renamed for clarity
+
+class LLMChain:
     def __init__(self, openai_api_key, knowledge_base, model_name="gpt-3.5-turbo", temperature=0.7):
         self.llm = LangchainOpenAI(openai_api_key=openai_api_key, model_name=model_name, temperature=temperature)
-        self.knowledge_base = knowledge_base  # Store the knowledge base
+        self.knowledge_base = knowledge_base
 
         self.prompt_template = PromptTemplate.from_template("""Udziel odpowiedzi na pytanie na podstawie kontekstu.
             Kontekst: {context}
             Pytanie: {question}
             """)
 
-        # Define the chain using the pipe operator
         self.chain = (
-            {"context": lambda x: "\n\n".join([doc.page_content for doc in self.knowledge_base.search(x["question"], k=3)]), "question": RunnablePassthrough()}
-            | self.prompt_template
-            | self.llm
-            | StrOutputParser()
+                {"context": lambda x: "\n\n".join(
+                    [doc.page_content for doc in self.knowledge_base.search(x["question"], k=3)]),
+                 "question": RunnablePassthrough()}
+                | self.prompt_template
+                | self.llm
+                | StrOutputParser()
         )
 
-    def run(self, question): #Now only takes the question
+    def run(self, question):
         return self.chain.invoke({"question": question})
 
 
 class StreamlitApp:
-    def __init__(self, knowledge_base, llm_chain_wrapper, openai_api_key): # Pass openai_api_key
+    def __init__(self, knowledge_base, llm_chain_wrapper, openai_api_key):
         self.knowledge_base = knowledge_base
         self.llm_chain_wrapper = llm_chain_wrapper
-        self.openai_api_key = openai_api_key # Store the API key
-        self.openai_client = OpenAI(api_key=self.openai_api_key)  # Initialize OpenAI client here
+        self.openai_api_key = openai_api_key
+        self.openai_client = OpenAI(api_key=self.openai_api_key)
 
-
-        st.set_page_config(page_title="Prosty Chat z AI", page_icon="🤖")
+        st.set_page_config(page_title="Developers Day Chat Bot AI", page_icon="🤖")
         st.title("🤖 Developers Day Chat Bot AI")
         self.initialize_session_state()
 
@@ -108,19 +110,19 @@ class StreamlitApp:
                 st.markdown(prompt)
             with st.chat_message("assistant"):
                 with st.spinner("AI pisze..."):
-                    reply = self.llm_chain_wrapper.run(prompt) # Now pass only the question
+                    reply = self.llm_chain_wrapper.run(prompt)
 
                     st.markdown(reply)
             st.session_state.messages.append({"role": "assistant", "content": reply})
 
-# --- Main execution ---
+
 if __name__ == "__main__":
     openai_api_key = st.secrets["OPENAI_API_KEY"]
     pg_conn_string = st.secrets["PGVECTOR_URL"]
     collection_name = "chatbot_docs"
 
     knowledge_base = KnowledgeBase(pg_conn_string, collection_name, openai_api_key)
-    llm_chain_wrapper = LLMChainWrapper(openai_api_key, knowledge_base)  # Pass KB
+    llm_chain_wrapper = LLMChain(openai_api_key, knowledge_base)
 
-    app = StreamlitApp(knowledge_base, llm_chain_wrapper, openai_api_key) # Pass the API key
+    app = StreamlitApp(knowledge_base, llm_chain_wrapper, openai_api_key)
     app.run()
