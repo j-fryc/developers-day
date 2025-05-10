@@ -1,0 +1,21 @@
+Agenda:
+- prezka jako intro
+- 01_intro_generate.ipynb
+	- instalowanie paczek
+	- najprostsze zapytanie do LLMa, a w następnej komórce zapytanie do LLMa w streamlicie lub gradio
+- 02_knowledge_builder.ipynb
+	- prosty knowledge builder
+	- szkielet - klasa InMemoryKnowledgeBase bez treści, ale gdzieś obrazek co robimy i cheatsheet ze snippetami 
+		- RecursiveCharacterTextSplitter#split_text(str)
+		- InMemoryVectorStore#add_documents(Document)
+		- InMemoryVectorStore#similarity_search(str)
+	- odczytywanie i dziabanie na chunki pdfa
+		- task: recepta paracetamolu do podziabania wg sekcji
+	- a gdzieś unittesty z healthcheckami i/lub wizualizacje bazy danych. np. renderowanie tabelki i/lub statsy
+- 03_augument.ipynb
+	- rozszerzenie tego co było w 01_generate
+	- prompt engineering
+		- task: joinowanie chunków
+- przejście z jupyter notebooków na pliki pythonowe
+	- main.py + llm_chain.py + knowledgebase.py i gotowym streamlit_app.py
+	- task: uruchomić na localhost
