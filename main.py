@@ -3,13 +3,14 @@ import os
 from dotenv import load_dotenv
 
 from knowledgebase import KnowledgeBase, InMemoryKnowledgeBase
-from llm_chain import RAGLLMChain
+from llm_chain import MyLLMChain, RAGLLMChain
+
 
 # import streamlit as st
 # from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 class CliApp:
-    def __init__(self, knowledge_base: KnowledgeBase, llm_chain: RAGLLMChain):
+    def __init__(self, knowledge_base: KnowledgeBase, llm_chain: MyLLMChain):
         self.knowledge_base = knowledge_base
         self.llm_chain = llm_chain
 

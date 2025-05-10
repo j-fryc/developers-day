@@ -1,3 +1,5 @@
+import abc
+
 from langchain.prompts import PromptTemplate
 from langchain.schema import StrOutputParser
 from langchain_core.runnables import RunnableLambda
@@ -6,7 +8,14 @@ from langchain_openai import ChatOpenAI
 from knowledgebase import KnowledgeBase
 
 
-class RAGLLMChain:
+class MyLLMChain:
+    @abc.abstractmethod
+    def run(self, question: str) -> str:
+        """Run the LLM chain with the given question."""
+        pass
+
+
+class RAGLLMChain(MyLLMChain):
     def __init__(
             self,
             openai_api_key: str,

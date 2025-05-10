@@ -1,0 +1,12 @@
+openai
+langchain
+langchain-community
+langchain-openai
+tiktoken
+python-dotenv
+faiss-cpu
+jupyter
+streamlit
+ipywidgets  #?
+gradio
+pandas
