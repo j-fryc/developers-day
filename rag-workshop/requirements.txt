@@ -6,7 +6,8 @@ tiktoken
 python-dotenv
 faiss-cpu
 jupyter
-streamlit
 ipywidgets  #?
 gradio
 pandas
+scikit-learn
+matplotlib

@@ -5,7 +5,7 @@ Agenda:
 	- najprostsze zapytanie do LLMa, a w następnej komórce zapytanie do LLMa w streamlicie lub gradio
 - 02_knowledge_builder.ipynb
 	- prosty knowledge builder
-	- szkielet - klasa InMemoryKnowledgeBase bez treści, ale gdzieś obrazek co robimy i cheatsheet ze snippetami 
+	- szkielet - klasa InMemoryKnowledgeBase bez treści, ale gdzieś obrazek co robimy i cheatsheet ze snippetami
 		- RecursiveCharacterTextSplitter#split_text(str)
 		- InMemoryVectorStore#add_documents(Document)
 		- InMemoryVectorStore#similarity_search(str)
@@ -19,3 +19,15 @@ Agenda:
 - przejście z jupyter notebooków na pliki pythonowe
 	- main.py + llm_chain.py + knowledgebase.py i gotowym streamlit_app.py
 	- task: uruchomić na localhost
+
+# Windows
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+
+# conda
+conda create -n venv
+conda activate venv
+conda install --yes --file requirements.txt
